@@ -1,0 +1,288 @@
+/* style.css */
+
+/* --- Tailwind CSS configuration is handled externally via CDN for PoC, but rules like text-main below are global --- */
+
+:root {
+    /* Define global design system colors from the reference image for depth transitions */
+    --depth-0: #8EE6FF; /* Surface */
+    --depth-200: #1F8CD9; /* Sunlight Zone */
+    --depth-500: #104F8C; /* Twilight Zone */
+    --depth-1000: #081B3A; /* Midnight Zone */
+    --depth-4000: #020814; /* Abyssal Zone */
+    --depth-inf: #01040A; /* Deeper Still */
+    --color-accent: #8EE6FF; /* Glow accent color */
+    --text-main: #F0F8FF; /* Clean, slightly cool off-white */
+}
+
+body { margin: 0; overflow-x: hidden; background-color: #081B3A; color: white; }
+::-webkit-scrollbar { display: none; }
+
+/* 半透明霧層與深度過渡 - Softened the glow a bit */
+#bg-color-layer {
+    position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+    transition: background-color 0.1s ease-out;
+    background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(2,8,20,0.5) 100%);
+}
+
+/* 緩慢流動光線 */
+.light-rays {
+    position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: repeating-linear-gradient(
+        35deg,
+        rgba(142, 230, 255, 0) 0%,
+        rgba(142, 230, 255, 0.02) 5%, /* Slightly lighter for show-feel */
+        rgba(142, 230, 255, 0) 10%
+    );
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 5;
+    animation: slow-rays 8s linear infinite; /* 20s */
+}
+@keyframes slow-rays {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-5%) rotate(2deg); }
+}
+
+/* 巨大水母輪廓 */
+#hero-jellyfish-container {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none; /* 讓點擊穿透到下面的滾動層 */
+    z-index: 5;
+    overflow: hidden;
+}
+#canvas3d {
+    width: 105vw !important;
+    height: 105vh !important;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.1);
+    transform-origin: center center;
+    will-change: transform, opacity, filter;
+    /* 初始化一個不改變視覺的濾鏡 */
+    filter: blur(0px) brightness(1) contrast(1);
+}
+/*#hero-jellyfish-container {
+    animation: slow-float 4s ease-in-out infinite alternate;
+}*/
+@keyframes slow-float {
+    0%, 100% { opacity: 0.2; transform: translate(-50%, 0); }
+    50% { opacity: 0.6; transform: translate(-50%, 10px); } /* Smaller movement for show quality */
+}
+
+/* 增加 CSS 硬體加速提示，減少渲染卡頓 */
+.water-refraction, .char, #hero-jellyfish-container {
+    will-change: transform, opacity, filter;
+}
+.animate-pulse-custom {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* 水波折射濾鏡效果 (套用於文字與水母) - Adjusted for better show quality */
+.water-refraction {
+    filter: drop-shadow(0 0 15px rgba(142, 230, 255, 0.25)); /* Softened glow */
+}
+
+/* Text Split Styling */
+.char { display: inline-block;will-change: transform, opacity, filter; }
+.word { display: inline-block; white-space: nowrap; margin-right: 0.2em; }
+/* Ensure text stands out cleanly with a subtle glow */
+.split-text {
+    color: var(--text-main);
+    text-shadow: 0 0 20px rgba(142, 230, 255, 0.4);
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+/* Ocean text detail - like the ref picture's Ocean text with texture */
+.split-text-ocean {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.6);
+    position: relative;
+    /* This class is for an alternative, texture-like h1 if needed later */
+}
+
+/* Three.js canvas setup */
+#webgl-canvas {
+    position: fixed; inset: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; mix-blend-mode: screen;
+}
+
+/* Main content wrapper - fixed and centered */
+main {
+    position: fixed; inset: 0; width: 100%; height: 100%; z-index: 20; display: flex; flex-direction: column; justify-content: center; items-center; pointer-events: none;
+}
+
+#hero-section {
+    padding: 0;/*position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; items-center; text-center; px: 1.5rem; width: 100%; height: 100%; z-index: 20;*/
+}
+
+
+/* 第二區塊 */
+.stage-text-container {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    padding: 0 10vw;
+    z-index: 30;
+    pointer-events: none;
+}
+
+.text-left { text-align: left; left: 0; }
+.text-right { text-align: right; right: 0; width: auto !important;}
+
+.split-char {
+    display: inline-block;
+    will-change: transform, opacity, filter;
+    filter: blur(15px);
+    opacity: 0;
+    transform: scale(1.2) translateY(20px);
+}
+
+/* 滑鼠跟隨水母容器 */
+#cursor-jelly {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0; /* 初始隱藏 */
+    transition: opacity 2s ease;
+}
+
+/* 第三區塊佈局 */
+.bubble-section {
+    position: fixed; /* 改為 fixed，讓它跟隨鏡頭 */
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, rgba(16, 79, 140, 0.2) 0%, transparent 70%);
+    pointer-events: none; /* 初始不可點擊 */
+    opacity: 0;           /* 初始隱形 */
+    visibility: hidden;   /* 初始不佔位 */
+    transition: background 1s ease;
+}
+
+/* 當啟動 active 類別時才顯示 */
+.bubble-section.active {
+    pointer-events: auto;
+    visibility: visible;
+}
+
+.bubble-container {
+    display: flex;
+    gap: 50px;
+}
+
+/* 氣泡按鈕 */
+.bubble-card {
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1), 0 15px 35px rgba(0, 0, 0, 0.3);
+    animation: bubbleBreath 4s infinite ease-in-out;
+    transition: 0.5s;
+}
+
+.bubble-card:hover {
+    transform: scale(1.05) translateY(-10px);
+    box-shadow: 0 0 50px rgba(142, 230, 255, 0.6);
+    border: 1px solid rgba(142, 230, 255, 0.8);
+}
+
+/* 影像放大 200% */
+.bubble-img {
+    width: 100%;
+    height: 100%;
+    background-size: 400%; /* 關鍵：放大影像 */
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.7;
+    transition: 0.5s;
+}
+
+.bubble-card:hover .bubble-img {
+    opacity: 1;
+    transform: scale(1.1); /* 懸停時影像稍微縮放 */
+}
+
+/* 氣泡呼吸動畫 */
+@keyframes bubbleBreath {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-15px) scale(1.02); }
+}
+
+/* 圓形彈窗 */
+.circle-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 8, 20, 0.85);
+    backdrop-filter: blur(15px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.circle-modal-content {
+    width: 500px;
+    height: 500px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+    box-shadow: 0 0 100px rgba(142, 230, 255, 0.3);
+}
+
+.circle-img-container {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.circle-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 正常填充 */
+}
+
+.circle-info h2 {
+    font-size: 1.8rem;
+    color: #8EE6FF;
+    margin-bottom: 10px;
+}
+
+.circle-info p {
+    font-size: 1rem;
+    max-width: 300px;
+    opacity: 0.8;
+    line-height: 1.5;
+}

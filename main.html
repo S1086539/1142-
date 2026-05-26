@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drifting Birth｜漂流而生</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .stage-text-container {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            /* 限制寬度，讓左右對齊能精準定錨在兩側 */
+            width: 35vw; 
+            z-index: 30;
+            pointer-events: none;
+        }
+        /* 第一、三站嚴格貼齊左側 */
+        .stage-1, .stage-3 { 
+            left: 10vw; 
+            text-align: left; 
+        }
+        /* 第二、四站嚴格貼齊右側 */
+        .stage-2, .stage-4 { 
+            right: 10vw; 
+            text-align: right; 
+        }
+    
+        .stage-text-container .char {
+            opacity: 0; 
+        }
+    </style>
+</head>
+<body class="main-wrapper h-[4000vh] w-full relative overflow-x-hidden bg-[#01040A]">
+
+    <div id="bg-color-layer" class="fixed inset-0 pointer-events-none z-0"></div>
+    <div class="light-rays fixed inset-0 z-0 pointer-events-none"></div>
+
+    <canvas id="webgl-canvas" class="fixed inset-0 w-full h-full z-10 pointer-events-none mix-blend-screen"></canvas>
+
+    <div id="hero-jellyfish-container" class="fixed inset-0 flex justify-center items-center z-10 pointer-events-none">
+        <canvas id="canvas3d" class="w-full h-full"></canvas>
+    </div>
+
+    <main class="fixed inset-0 w-full h-full z-20 pointer-events-none">
+    
+        <section id="hero-section" class="absolute inset-0 flex flex-col justify-center items-center text-center px-4">
+            <div class="max-w-3xl w-full">
+                <h1 class="split-text text-5xl lg:text-8xl font-light tracking-[0.3em] mb-12 text-white water-refraction" aria-label="漂流而生">
+                    漂流而生
+                </h1>
+                <p class="split-text text-lg lg:text-2xl font-light leading-relaxed tracking-[0.2em] text-white/90" aria-label="在海洋裡，水母沒有固定方向，卻走過最漫長的生命旅程。">
+                    在海洋裡，<br>
+                    水母沒有固定方向，<br>
+                    卻走過最漫長的生命旅程。
+                </p>
+            </div>
+
+            <div class="scroll-hint absolute bottom-10 left-1/2 -translate-x-1/2 text-sm tracking-[0.3em] text-white/40 animate-bounce">
+                ↓ 開始探索
+            </div>
+        </section>
+
+        <div class="stage-text-container stage-1 text-left text-white">
+            <h2 class="split-text text-3xl lg:text-5xl font-light tracking-[0.2em] mb-6">第一站｜相遇</h2>
+            <p class="split-text text-base lg:text-lg font-light leading-relaxed tracking-[0.15em] text-white/80">
+                成熟的水母會在海中釋放精子與卵子。<br>
+                在看不見的海流裡，一場生命的相遇開始發生。
+            </p>
+        </div>
+
+        <div class="stage-text-container stage-2 text-right text-white">
+            <h2 class="split-text text-3xl lg:text-5xl font-light tracking-[0.2em] mb-6">第二站｜漂流</h2>
+            <p class="split-text text-base lg:text-lg font-light leading-relaxed tracking-[0.15em] text-white/80">
+                受精後，幼蟲開始尋找適合停靠的地方。<br>
+                它不知道目的地，只能跟著海流前進。
+            </p>
+        </div>
+
+        <div class="stage-text-container stage-3 text-left text-white">
+            <h2 class="split-text text-3xl lg:text-5xl font-light tracking-[0.2em] mb-6">第三站｜停留</h2>
+            <p class="split-text text-base lg:text-lg font-light leading-relaxed tracking-[0.15em] text-white/80">
+                在這裡，它不再漂流。<br>
+                它開始複製自己，靜靜等待下一次改變。
+            </p>
+        </div>
+
+        <div class="stage-text-container stage-4 text-right text-white">
+            <h2 class="split-text text-3xl lg:text-5xl font-light tracking-[0.2em] mb-6">第四站｜誕生</h2>
+            <p class="split-text text-base lg:text-lg font-light leading-relaxed tracking-[0.15em] text-white/80">
+                身體開始分節。<br>
+                一片又一片的小生命，再次被送回海洋。
+            </p>
+        </div>
+    </main>
+    <section class="bubble-section" id="bubbleSection">
+        <div class="bubble-container">
+            <div class="bubble-card" onclick="showJellyDetail('image_532ac0.jpg', ' 冥河水母', '極為罕見的深海巨型水母。牠的傘緣直徑可達1公尺。')">
+                <div class="bubble-img" style="background-image: url('image_532ac0.jpg');"></div>
+            </div>
+            <div class="bubble-card" onclick="showJellyDetail('image_532e26.jpg', '僧帽水母', '其藍色浮囊漂浮在海面上，依靠風力和洋流移動，觸手則懸浮在水面下捕食。')">
+                <div class="bubble-img" style="background-image: url('image_532e26.jpg');"></div>
+            </div>
+            <div class="bubble-card" onclick="showJellyDetail('image_5331ad.jpg', '維多利亞水母', '牠們體內含有生物螢光蛋白，在受到刺激時會在傘緣發出綠色螢光。')">
+                <div class="bubble-img" style="background-image: url('image_5331ad.jpg');"></div>
+            </div>
+        </div>
+     </section>
+
+    <div class="circle-modal" id="circleModal" onclick="closeCircleModal()">
+        <div class="circle-modal-content" onclick="event.stopPropagation()">
+            <div class="circle-img-container">
+                <img id="modalImg" src="" alt="">
+            </div>
+            <div class="circle-info">
+                <h2 id="modalTitle"></h2>
+                <p id="modalDesc"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <script type="module" src="main.js"></script>
+ 
+</body>
+</html>
+
